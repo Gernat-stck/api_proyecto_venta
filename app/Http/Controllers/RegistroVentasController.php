@@ -39,7 +39,7 @@ class RegistroVentasController extends Controller
             'subtotal' => 'nullable|numeric',
             'giro' => 'required|string|max:255',
             'registro_num' => 'required|string|max:20',
-            'factura' => 'required|file|mimes:pdf|max:2048',
+            'factura' => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
         // Guardar el archivo PDF

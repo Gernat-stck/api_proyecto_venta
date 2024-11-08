@@ -44,11 +44,25 @@ class RegistroVentasController extends Controller
 
         // Guardar el archivo PDF
         if ($request->hasFile('factura')) {
-            $path = $request->file('factura')->store('facturas', 'public');
-            $validatedData['documento_path'] = $path;
+            $file = $request->file('factura');
+            $path = $file->store('public/pdfs'); // Almacena el archivo en storage/app/public/pdfs
+
+            // Verificar si el archivo fue almacenado correctamente
+            if ($path) {
+                // Cambiar el nombre de la columna a documento_path
+                $validatedData['documento_path'] = $path;
+            } else {
+                // Registrar un error si no se pudo guardar el archivo
+                return response()->json(['error' => 'No se pudo guardar el archivo PDF.'], 500);
+            }
         }
 
-        $invoice = RegistroVentas::create($validatedData);
+        try {
+            $invoice = RegistroVentas::create($validatedData);
+        } catch (\Exception $e) {
+            // Registrar un error si no se pudo guardar en la base de datos
+            return response()->json(['error' => 'No se pudo guardar los datos en la base de datos.'], 500);
+        }
 
         return response()->json(['success' => true, 'invoice' => $invoice], 201);
     }
